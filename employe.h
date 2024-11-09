@@ -1,57 +1,58 @@
 #ifndef EMPLOYE_H
 #define EMPLOYE_H
-
-#include <QString>
-#include <QDate>
+#include<QString>
+#include<QDate>
+#include<QSqlQuery>
 #include <QSqlQueryModel>
 
-class Employe {
+class EMPLOYE
+{
+    QString NOM,PRENOM,VILLE,PASSWORD,NUM_TEL,GESTION;
+    int CIN;
+    float SALAIRE;
+    QDate DATE_NAISSANCE,DATE_EMBAUCHE;
 public:
-    // Constructeur
-    Employe();
-    Employe(const QString &cin, const QString &nom, const QString &prenom, const QString &ville,
-            const QString &poste, const QDate &dateEmbauche, double salaire, const QString &telephone);
+    EMPLOYE();
+    EMPLOYE(int,QString,QString,QDate,QString,QString,QDate,float,QString,QString);
 
-    // Méthode pour créer une connexion à la base de données
-    bool createEmploye();
+    int getID_EMPLOYE() {  return CIN; }
+    QString getNOM() { return NOM; }
+    QString getPRENOM() { return PRENOM; }
+    QDate getDATE_NAISSANCE() {return DATE_NAISSANCE; }
+    QString getVILLE() { return VILLE; }
+    QString getPASSWORD() { return PASSWORD; }
+    QDate getDATE_EMBAUCHE() { return DATE_EMBAUCHE; }
+    float getSALAIRE() {  return SALAIRE; }
+    QString getNUM_TEL() { return NUM_TEL; }
+    QString getGESTION() { return GESTION; }
 
-    // Getters
-    QString getCIN() const;
-    QString getNom() const;
-    QString getPrenom() const;
-    QString getVille() const;
-    QString getPoste() const;
-    QDate getDateEmbauche() const;
-    double getSalaire() const;
-    QString getTelephone() const;
 
-    // Setters
-    void setCIN(const QString &cin);
-    void setNom(const QString &nom);
-    void setPrenom(const QString &prenom);
-    void setVille(const QString &ville);
-    void setPoste(const QString &poste);
-    void setDateEmbauche(const QDate &date);
-    void setSalaire(double salaire);
-    void setTelephone(const QString &telephone);
 
-    // Autres méthodes
-    bool ajouter();
-    QSqlQueryModel* afficher();
-    bool supprimer(const QString &cin);
-    bool updateEmployee(); // Utilisation de 'updateEmployee' au lieu de 'modifier'
-  bool modifier();
-private:
-    // Attributs de la classe
-    QSqlDatabase db;
-    QString m_CIN;
-    QString m_nom;
-    QString m_prenom;
-    QString m_ville;
-    QString m_poste;
-    QDate m_dateEmbauche;
-    double m_salaire;
-    QString m_telephone;
+
+    void setID_EMPLOYE(int CIN) { this->CIN = CIN; }
+    void setNOM(QString NOM) { this->NOM = NOM; }
+    void setPRENOM(QString PRENOM) { this->PRENOM = PRENOM; }
+    void setDATE_NAISSANCE(QDate DATE_NAISSANCE) { this->DATE_NAISSANCE = DATE_NAISSANCE; }
+    void setVILLE(QString VILLE) { this->VILLE = VILLE; }
+    void setPASSWORD(QString PASSWORD) { this->PASSWORD = PASSWORD; }
+    void setDATE_EMBAUCHE(QDate DATE_EMBAUCHE) { this->DATE_EMBAUCHE = DATE_EMBAUCHE; }
+    void setSALAIRE(float SALAIRE) { this->SALAIRE = SALAIRE; }
+    void setNUM_TEL(QString NUM_TEL) { this->NUM_TEL = NUM_TEL; }
+    void setGESTION(QString GESTION) { this->GESTION = GESTION; }
+
+    /******************************************************************/
+
+       bool ajouter();
+       QSqlQueryModel* afficher();
+       bool supprimer(int CIN);
+       bool modifier();
+       QSqlQueryModel* afficher_cin();
+       QSqlQueryModel* tri_CIN();
+       QSqlQueryModel* tri_Nom();
+       QSqlQueryModel* tri_Gestion();
+       QSqlQueryModel* rechercher(QString);
+
+
 };
 
 #endif // EMPLOYE_H

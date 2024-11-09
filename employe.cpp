@@ -1,111 +1,176 @@
 #include "employe.h"
-#include <QSqlQuery>
-#include <QSqlDatabase>
-#include <QSqlError>
+#include<QString>
+#include<QDate>
+#include<QSqlQuery>
 #include <QSqlQueryModel>
-#include <QDebug>
-#include <QVariant>
 
-// Constructeur par défaut
-Employe::Employe() {}
 
-Employe::Employe(const QString &cin, const QString &nom, const QString &prenom, const QString &ville,
-                 const QString &poste, const QDate &dateEmbauche, double salaire, const QString &telephone)
-    : m_CIN(cin), m_nom(nom), m_prenom(prenom), m_ville(ville),
-      m_poste(poste), m_dateEmbauche(dateEmbauche), m_salaire(salaire), m_telephone(telephone) {}
-
-// Getters
-QString Employe::getCIN() const { return m_CIN; }
-QString Employe::getNom() const { return m_nom; }
-QString Employe::getPrenom() const { return m_prenom; }
-QString Employe::getVille() const { return m_ville; }
-QString Employe::getPoste() const { return m_poste; }
-QDate Employe::getDateEmbauche() const { return m_dateEmbauche; }
-double Employe::getSalaire() const { return m_salaire; }
-QString Employe::getTelephone() const { return m_telephone; }
-
-// Setters
-void Employe::setCIN(const QString &cin) { m_CIN = cin; }
-void Employe::setNom(const QString &nom) { m_nom = nom; }
-void Employe::setPrenom(const QString &prenom) { m_prenom = prenom; }
-void Employe::setVille(const QString &ville) { m_ville = ville; }
-void Employe::setPoste(const QString &poste) { m_poste = poste; }
-void Employe::setDateEmbauche(const QDate &date) { m_dateEmbauche = date; }
-void Employe::setSalaire(double salaire) { m_salaire = salaire; }
-void Employe::setTelephone(const QString &telephone) { m_telephone = telephone; }
-
-bool Employe::createEmploye() {
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("employes.db");
-
-    if (!db.open()) {
-        qDebug() << "Erreur de connexion à la base de données : " << db.lastError().text();
-        return false;
-    }
-    qDebug() << "Connexion à la base de données réussie.";
-    return true;
+ EMPLOYE::EMPLOYE()
+{
+    NOM = "";
+    PRENOM = "";
+    VILLE = "";
+    PASSWORD = "";
+    NUM_TEL = "";
+    GESTION = "";
+    CIN = 0;
+    SALAIRE = 0.0;
+    DATE_NAISSANCE = QDate();
+    DATE_EMBAUCHE = QDate();
 }
+ EMPLOYE::EMPLOYE(int CIN, QString NOM, QString PRENOM, QDate DATE_NAISSANCE, QString VILLE, QString PASSWORD, QDate DATE_EMBAUCHE, float SALAIRE, QString NUM_TEL, QString GESTION)
+ {
+     this->CIN = CIN;
+     this->NOM = NOM;
+     this->PRENOM = PRENOM;
+     this->DATE_NAISSANCE = DATE_NAISSANCE;
+     this->VILLE = VILLE;
+     this->PASSWORD = PASSWORD;
+     this->DATE_EMBAUCHE = DATE_EMBAUCHE;
+     this->SALAIRE = SALAIRE;
+     this->NUM_TEL = NUM_TEL;
+     this->GESTION = GESTION;
+ }
 
-// Ajouter un employé dans la base de données
-bool Employe::ajouter() {
-    QSqlQuery query;
-    query.prepare("INSERT INTO employes (CIN, nom, prenom, ville, poste, dateEmbauche, salaire, telephone) "
-                  "VALUES (:CIN, :nom, :prenom, :ville, :poste, :dateEmbauche, :salaire, :telephone)");
-    query.bindValue(":CIN", m_CIN);
-    query.bindValue(":nom", m_nom);
-    query.bindValue(":prenom", m_prenom);
-    query.bindValue(":ville", m_ville);
-    query.bindValue(":poste", m_poste);
-    query.bindValue(":dateEmbauche", m_dateEmbauche);
-    query.bindValue(":salaire", m_salaire);
-    query.bindValue(":telephone", m_telephone);
+ /***********************************************************************************/
 
-    return query.exec();
-}
+ bool EMPLOYE::ajouter()
+ {
+     QSqlQuery query;
+     query.prepare("INSERT INTO EMPLOYE (CIN, NOM, PRENOM, DATE_NAISSANCE, VILLE, PASSWORD, DATE_EMBAUCHE, SALAIRE, NUM_TEL, GESTION)"
+                   "VALUES (:CIN, :NOM, :PRENOM, :DATE_NAISSANCE, :VILLE, :PASSWORD, :DATE_EMBAUCHE, :SALAIRE, :NUM_TEL, :GESTION)");
+     query.bindValue(":CIN", CIN);
+     query.bindValue(":NOM", NOM);
+     query.bindValue(":PRENOM", PRENOM);
+     query.bindValue(":DATE_NAISSANCE", DATE_NAISSANCE);
+     query.bindValue(":VILLE", VILLE);
+     query.bindValue(":PASSWORD", PASSWORD);
+     query.bindValue(":DATE_EMBAUCHE", DATE_EMBAUCHE);
+     query.bindValue(":SALAIRE", SALAIRE);
+     query.bindValue(":NUM_TEL", NUM_TEL);
+     query.bindValue(":GESTION", GESTION);
 
-// Afficher les employés
-QSqlQueryModel* Employe::afficher() {
-    QSqlQueryModel* model = new QSqlQueryModel();
-    model->setQuery("SELECT * FROM employes");
-    return model;
-}
+     return query.exec();
+ }
 
-// Supprimer un employé par CIN
-bool Employe::supprimer(const QString &cin) {
-    QSqlQuery query;
-    query.prepare("DELETE FROM employes WHERE CIN = :CIN");
-    query.bindValue(":CIN", cin);
-    return query.exec();
-}
+ QSqlQueryModel* EMPLOYE::afficher()
+ {
+     QSqlQueryModel* model = new QSqlQueryModel();
+     model->setQuery("SELECT CIN, NOM, PRENOM, DATE_NAISSANCE, VILLE, PASSWORD, DATE_EMBAUCHE, SALAIRE, NUM_TEL, GESTION FROM EMPLOYE");
+     model->setHeaderData(0, Qt::Horizontal, QObject::tr("CIN"));
+     model->setHeaderData(1, Qt::Horizontal, QObject::tr("NOM"));
+     model->setHeaderData(2, Qt::Horizontal, QObject::tr("PRENOM"));
+     model->setHeaderData(3, Qt::Horizontal, QObject::tr("DATE_NAISSANCE"));
+     model->setHeaderData(4, Qt::Horizontal, QObject::tr("VILLE"));
+     model->setHeaderData(5, Qt::Horizontal, QObject::tr("PASSWORD"));
+     model->setHeaderData(6, Qt::Horizontal, QObject::tr("DATE_EMBAUCHE"));
+     model->setHeaderData(7, Qt::Horizontal, QObject::tr("SALAIRE"));
+     model->setHeaderData(8, Qt::Horizontal, QObject::tr("NUM_TEL"));
+     model->setHeaderData(9, Qt::Horizontal, QObject::tr("GESTION"));
+     return model;
+ }
 
-// Mettre à jour un employé par CIN
-bool Employe::updateEmployee() { // Changement de nom ici
-    QSqlQuery query;
-    query.prepare("UPDATE employes SET nom = :nom, prenom = :prenom, ville = :ville, poste = :poste, "
-                  "dateEmbauche = :dateEmbauche, salaire = :salaire, telephone = :telephone "
-                  "WHERE CIN = :CIN");
-    query.bindValue(":CIN", m_CIN);
-    query.bindValue(":nom", m_nom);
-    query.bindValue(":prenom", m_prenom);
-    query.bindValue(":ville", m_ville);
-    query.bindValue(":poste", m_poste);
-    query.bindValue(":dateEmbauche", m_dateEmbauche);
-    query.bindValue(":salaire", m_salaire);
-    query.bindValue(":telephone", m_telephone);
 
-    return query.exec();
-}
-bool Employe::modifier() {
-    QSqlQuery query;
-    query.prepare("UPDATE employes SET nom = :nom, prenom = :prenom, ville = :ville, poste = :poste, "
-                  "dateEmbauche = :dateEmbauche, salaire = :salaire, telephone = :telephone WHERE CIN = :cin");
-    query.bindValue(":CIN", m_CIN);
-    query.bindValue(":nom", m_nom);
-    query.bindValue(":prenom", m_prenom);
-    query.bindValue(":ville", m_ville);
-    query.bindValue(":poste", m_poste);
-    query.bindValue(":dateEmbauche", m_dateEmbauche);
-    query.bindValue(":salaire", m_salaire);
-    query.bindValue(":telephone", m_telephone);
-    return query.exec();  // Exécute la requête et retourne true si elle réussit
-}
+
+ bool EMPLOYE::supprimer(int CIN)
+ {
+     QSqlQuery query;
+     query.prepare("DELETE FROM EMPLOYE WHERE CIN = :CIN");
+     query.bindValue(":CIN", CIN);
+
+     return query.exec();
+ }
+
+
+ bool EMPLOYE::modifier()
+ {
+     QSqlQuery query;
+     query.prepare("UPDATE EMPLOYE SET NOM=:NOM, PRENOM=:PRENOM, DATE_NAISSANCE=:DATE_NAISSANCE, VILLE=:VILLE, PASSWORD=:PASSWORD, DATE_EMBAUCHE=:DATE_EMBAUCHE, SALAIRE=:SALAIRE, NUM_TEL=:NUM_TEL, GESTION=:GESTION WHERE CIN=:CIN");
+     query.bindValue(":CIN", CIN);
+     query.bindValue(":NOM", NOM);
+     query.bindValue(":PRENOM", PRENOM);
+     query.bindValue(":DATE_NAISSANCE", DATE_NAISSANCE);
+     query.bindValue(":VILLE", VILLE);
+     query.bindValue(":PASSWORD", PASSWORD);
+     query.bindValue(":DATE_EMBAUCHE", DATE_EMBAUCHE);
+     query.bindValue(":SALAIRE", SALAIRE);
+     query.bindValue(":NUM_TEL", NUM_TEL);
+     query.bindValue(":GESTION", GESTION);
+
+     return query.exec();
+ }
+
+
+ QSqlQueryModel* EMPLOYE::afficher_cin()
+ {
+     QSqlQueryModel* model = new QSqlQueryModel();
+     model->setQuery("SELECT CIN FROM EMPLOYE");
+     model->setHeaderData(0, Qt::Horizontal, QObject::tr("CIN"));
+     return model;
+ }
+
+
+ QSqlQueryModel* EMPLOYE::tri_CIN()
+ {
+     QSqlQueryModel* model = new QSqlQueryModel();
+     model->setQuery("SELECT CIN, NOM, PRENOM, DATE_NAISSANCE, VILLE, PASSWORD, DATE_EMBAUCHE, SALAIRE, NUM_TEL, GESTION FROM EMPLOYE ORDER BY CIN");
+     model->setHeaderData(0, Qt::Horizontal, QObject::tr("CIN"));
+     model->setHeaderData(1, Qt::Horizontal, QObject::tr("NOM"));
+     model->setHeaderData(2, Qt::Horizontal, QObject::tr("PRENOM"));
+     model->setHeaderData(3, Qt::Horizontal, QObject::tr("DATE_NAISSANCE"));
+     model->setHeaderData(4, Qt::Horizontal, QObject::tr("VILLE"));
+     model->setHeaderData(5, Qt::Horizontal, QObject::tr("PASSWORD"));
+     model->setHeaderData(6, Qt::Horizontal, QObject::tr("DATE_EMBAUCHE"));
+     model->setHeaderData(7, Qt::Horizontal, QObject::tr("SALAIRE"));
+     model->setHeaderData(8, Qt::Horizontal, QObject::tr("NUM_TEL"));
+     model->setHeaderData(9, Qt::Horizontal, QObject::tr("GESTION"));
+     return model;
+ }
+
+
+ QSqlQueryModel* EMPLOYE::tri_Nom()
+ {
+     QSqlQueryModel* model = new QSqlQueryModel();
+     model->setQuery("SELECT CIN, NOM, PRENOM, DATE_NAISSANCE, VILLE, PASSWORD, DATE_EMBAUCHE, SALAIRE, NUM_TEL, GESTION FROM EMPLOYE ORDER BY NOM");
+     model->setHeaderData(0, Qt::Horizontal, QObject::tr("CIN"));
+     model->setHeaderData(1, Qt::Horizontal, QObject::tr("NOM"));
+     model->setHeaderData(2, Qt::Horizontal, QObject::tr("PRENOM"));
+     model->setHeaderData(3, Qt::Horizontal, QObject::tr("DATE_NAISSANCE"));
+     model->setHeaderData(4, Qt::Horizontal, QObject::tr("VILLE"));
+     model->setHeaderData(5, Qt::Horizontal, QObject::tr("PASSWORD"));
+     model->setHeaderData(6, Qt::Horizontal, QObject::tr("DATE_EMBAUCHE"));
+     model->setHeaderData(7, Qt::Horizontal, QObject::tr("SALAIRE"));
+     model->setHeaderData(8, Qt::Horizontal, QObject::tr("NUM_TEL"));
+     model->setHeaderData(9, Qt::Horizontal, QObject::tr("GESTION"));
+     return model;
+ }
+
+ QSqlQueryModel* EMPLOYE::tri_Gestion()
+ {
+     QSqlQueryModel* model = new QSqlQueryModel();
+     model->setQuery("SELECT CIN, NOM, PRENOM, DATE_NAISSANCE, VILLE, PASSWORD, DATE_EMBAUCHE, SALAIRE, NUM_TEL, GESTION FROM EMPLOYE ORDER BY GESTION");
+     model->setHeaderData(0, Qt::Horizontal, QObject::tr("CIN"));
+     model->setHeaderData(1, Qt::Horizontal, QObject::tr("NOM"));
+     model->setHeaderData(2, Qt::Horizontal, QObject::tr("PRENOM"));
+     model->setHeaderData(3, Qt::Horizontal, QObject::tr("DATE_NAISSANCE"));
+     model->setHeaderData(4, Qt::Horizontal, QObject::tr("VILLE"));
+     model->setHeaderData(5, Qt::Horizontal, QObject::tr("PASSWORD"));
+     model->setHeaderData(6, Qt::Horizontal, QObject::tr("DATE_EMBAUCHE"));
+     model->setHeaderData(7, Qt::Horizontal, QObject::tr("SALAIRE"));
+     model->setHeaderData(8, Qt::Horizontal, QObject::tr("NUM_TEL"));
+     model->setHeaderData(9, Qt::Horizontal, QObject::tr("GESTION"));
+     return model;
+ }
+
+ QSqlQueryModel* EMPLOYE::rechercher(QString rech)
+ {
+     QSqlQueryModel *model= new QSqlQueryModel();
+     model->setQuery("SELECT * FROM EMPLOYE WHERE CIN LIKE'%"+rech+"%' or NOM LIKE'%"+rech+"%' or PRENOM LIKE'%"+rech+"%'" );
+     return model;
+
+
+ }
+
+
+
+

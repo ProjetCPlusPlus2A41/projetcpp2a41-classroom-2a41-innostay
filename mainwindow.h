@@ -19,23 +19,19 @@ public:
     ~MainWindow();
 
 private slots:
-private slots:
-    void on_addEmployeeButton_clicked();
-    void on_deleteEmployeeButton_clicked();
-    void on_viewEmployeeButton_clicked();
-    void on_updateEmployeeButton_clicked();
-    void on_modifierButton_clicked(); // Ajoutez cette ligne
+    /* INTEGRATION EMPLOYE */
+
+
+    /* MENU */
+
+
+    /* LOGIN */
+    void on_Login_Button_clicked();
+
 
 private:
-    void setupLayout(QWidget *parent);
-    void loadEmployeeTable();
-    void addEmployee(const Employe &employe);
-    void updateEmployee(const QString &cin, const Employe &employe); // Méthode pour mettre à jour un employé
-    void deleteEmployee(const QString &cin);
-    Employe getEmployee(int cin); // Notez que nous utilisons QString ici
-
-    QList<Employe> employees;
     Ui::MainWindow *ui;
-};
+    EMPLOYE E;
 
+};
 #endif // MAINWINDOW_H

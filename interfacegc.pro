@@ -41,3 +41,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     ressources.qrc
 QT += sql
+
+DISTFILES += \
+    ressource/background-image.png

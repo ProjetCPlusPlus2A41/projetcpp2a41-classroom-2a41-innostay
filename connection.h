@@ -4,14 +4,14 @@
 #include <QSqlError>
 #include <QSqlQuery>
 
-class Connection
+class  Connection
 {
-private:
     QSqlDatabase db;
 public:
     Connection();
-    bool createConnection();  // Changez ici pour correspondre au .cpp
-    void closeConnection();
+    bool CreateConnexion();
+    bool OuvrirConnexion();
+    void FermerConnexion();
 };
 
-#endif // CONNECTION_H
+#endif // CONNEXION_H

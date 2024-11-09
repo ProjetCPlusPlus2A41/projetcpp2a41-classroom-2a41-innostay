@@ -32,7 +32,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="Login">
      <widget class="QLabel" name="Background_image">
@@ -205,7 +205,92 @@
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="Gestion_Employe"/>
+    <widget class="QWidget" name="Gestion_Employe">
+     <widget class="QLabel" name="Employe_background">
+      <property name="geometry">
+       <rect>
+        <x>-10</x>
+        <y>-10</y>
+        <width>1071</width>
+        <height>621</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-image: url(:/images/ressource/background-image.png);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Employe_title">
+      <property name="geometry">
+       <rect>
+        <x>66</x>
+        <y>60</y>
+        <width>121</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>GESTION DES EMPLOES</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="Employe_fermer">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>220</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Fermer</string>
+      </property>
+     </widget>
+     <widget class="QTabWidget" name="Personnel">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1061</width>
+        <height>611</height>
+       </rect>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="Personnels">
+       <attribute name="title">
+        <string>Gestion des Employés</string>
+       </attribute>
+       <widget class="QLabel" name="Employe_Background2">
+        <property name="geometry">
+         <rect>
+          <x>-10</x>
+          <y>-10</y>
+          <width>1081</width>
+          <height>591</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="liste">
+       <attribute name="title">
+        <string>Liste des Employés</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="Statistiques">
+       <attribute name="title">
+        <string>Statistiques</string>
+       </attribute>
+      </widget>
+     </widget>
+    </widget>
     <widget class="QWidget" name="Menu"/>
    </widget>
   </widget>
