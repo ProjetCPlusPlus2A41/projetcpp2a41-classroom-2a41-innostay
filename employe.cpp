@@ -176,7 +176,7 @@ void EMPLOYE::rechercher(QTableView *table,QString rech)
     query->bindValue(":X",rech);
     if(rech.isEmpty())
     {
-        query->prepare("SELECT * FROM EMPLOYE");
+        query->prepare("SELECT TO_CHAR(CIN) AS CIN, NOM, PRENOM, TO_CHAR(DATE_NAISSANCE, 'DD/MM/YYYY') AS DATE_NAISSANCE, VILLE, PASSWORD, TO_CHAR(DATE_EMBAUCHE, 'DD/MM/YYYY') AS DATE_EMBAUCHE, SALAIRE, TO_CHAR(NUM_TEL) AS NUM_TEL, GESTION FROM EMPLOYE");
     }
     query->exec();
     model->setQuery(*query);
