@@ -80,6 +80,13 @@ void MainWindow::on_bt_ajouter_clicked()
     QDate DATE_EMBAUCHE = ui->date_emb->date();
     float SALAIRE = ui->line_salaire->text().toFloat();
     int NUM_TEL = ui->line_numtel->text().toInt();
+    QString SALAIRE_String = ui->line_salaire->text();
+    QString CIN_String = ui->line_ID->text();
+    QString NUM_TEL_String = ui->line_numtel->text();
+    if(NUM_TEL_String.isEmpty()||SALAIRE_String.isEmpty()||GESTION.isEmpty()||CIN_String.isEmpty()||CIN == 0||PASSWORD.isEmpty()||NOM.isEmpty()||PRENOM.isEmpty()||VILLE.isEmpty()){
+        ui->label_info_gestion->setText("Erreur de controle de saisire");
+        return;
+    }
     EMPLOYE E(CIN,NOM,PRENOM,DATE_NAISSANCE,VILLE,PASSWORD,DATE_EMBAUCHE,SALAIRE,NUM_TEL,GESTION);
     bool test = E.ajouter();
     if(test){
@@ -103,6 +110,13 @@ void MainWindow::on_bt_modifier_clicked()
     QDate DATE_EMBAUCHE = ui->date_emb->date();
     float SALAIRE = ui->line_salaire->text().toFloat();
     int NUM_TEL = ui->line_numtel->text().toInt();
+    QString SALAIRE_String = ui->line_salaire->text();
+    QString CIN_String = ui->line_ID->text();
+    QString NUM_TEL_String = ui->line_numtel->text();
+    if(NUM_TEL_String.isEmpty()||SALAIRE_String.isEmpty()||GESTION.isEmpty()||CIN_String.isEmpty()||CIN == 0||PASSWORD.isEmpty()||NOM.isEmpty()||PRENOM.isEmpty()||VILLE.isEmpty()){
+        ui->label_info_gestion->setText("Erreur de controle de saisire");
+        return;
+    }
     EMPLOYE E(CIN,NOM,PRENOM,DATE_NAISSANCE,VILLE,PASSWORD,DATE_EMBAUCHE,SALAIRE,NUM_TEL,GESTION);
     bool test = E.modifier();
     if(test){
