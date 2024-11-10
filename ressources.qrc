@@ -8,5 +8,9 @@
         <file>ressource/statistiques (1).png</file>
         <file>ressource/tri 2 (1).png</file>
         <file>ressource/background-image.png</file>
+        <file>ressource/Logo.png</file>
+        <file>ressource/BG1.png</file>
+        <file>ressource/HidePassIcon.png</file>
+        <file>ressource/ShowPassIcon.png</file>
     </qresource>
 </RCC>

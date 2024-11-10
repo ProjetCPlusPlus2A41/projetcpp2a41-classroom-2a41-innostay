@@ -1,7 +1,5 @@
-QT       += core gui
-QT += core gui sql
+QT       += core gui sql printsupport multimedia multimediawidgets charts printsupport widgets axcontainer
 
-QT += sql
 TEMPLATE = app
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

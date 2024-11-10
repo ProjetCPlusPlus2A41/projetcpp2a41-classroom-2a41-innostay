@@ -14,241 +14,246 @@
 #include <QTableWidget>
 #include <QLabel>
 #include <QDebug>
+#include <QDesktopServices>
+#include <QPainter>
+#include <QPdfWriter>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+{
     ui->setupUi(this);
-
-
-    // Définir le titre de la fenêtre
-    setWindowTitle("Gestion des Employés");
-
+    setWindowTitle("INNOSTAY");
+    ui->table_Employe->setModel(E.afficher());
+    ui->comboBox_IDs->setModel(E.afficher_cin());
+    ui->Login_CIN_Filed->setValidator( new QIntValidator(0, 99999999, this));
+    ui->line_ID->setValidator( new QIntValidator(0, 99999999, this));
+    ui->line_numtel->setValidator( new QIntValidator(0, 99999999, this));
+    ui->line_salaire->setValidator( new QIntValidator(0, 99999999, this));
+    ui->line_salaire->setValidator(new QDoubleValidator(0, 99999999, 2, this));
+    ui->stackedWidget->setCurrentIndex(0);
 }
 
 MainWindow::~MainWindow() {
     delete ui;
 }
 
-
-
+int modes=1;
+void MainWindow::on_Login_check_PassShowHide_clicked()
+{
+    if(modes==1){
+        ui->Login_MDP_Field->setEchoMode(QLineEdit::Normal);modes=0;
+    }
+    else{
+        ui->Login_MDP_Field->setEchoMode(QLineEdit::Password);modes=1;
+    }
+}
 
 void MainWindow::on_Login_Button_clicked()
 {
-        QString CIN = ui->Login_line_CIN->text();
-        QString PASSWORD = ui->Login_line_Password->text();
-        QSqlQuery query;
-        QString gestion;
-
-        // Execute the query with parameters
-        if(query.exec("SELECT * FROM EMPLOYE WHERE CIN='" + CIN + "' AND PASSWORD='" + PASSWORD + "'")) {
-            if (query.next()) {
-                gestion = query.value(9).toString();  // Assuming 'GESTION' is at index 9 in the EMPLOYE table
-
-                // Set the view based on 'GESTION' role
-                ui->stackedWidget->setCurrentIndex(1);
-                if (gestion.compare("Administrateur") == 0) {
-                    ui->Main_push_Personnel->setEnabled(true);
-                    ui->Main_push_Evenement->setEnabled(true);
-                    ui->Main_push_Fournisseur->setEnabled(true);
-                    ui->Main_push_Locaux->setEnabled(true);
-                    ui->Main_push_Sponsoring->setEnabled(true);
-                }
-                else if (gestion.compare("Personnels") == 0) {
-                    ui->Main_push_Personnel->setEnabled(true);
-                    ui->Main_push_Evenement->setEnabled(false);
-                    ui->Main_push_Fournisseur->setEnabled(false);
-                    ui->Main_push_Locaux->setEnabled(false);
-                    ui->Main_push_Sponsoring->setEnabled(false);
-                }
-                else if (gestion.compare("Evenements") == 0) {
-                    ui->Main_push_Personnel->setEnabled(false);
-                    ui->Main_push_Evenement->setEnabled(true);
-                    ui->Main_push_Fournisseur->setEnabled(false);
-                    ui->Main_push_Locaux->setEnabled(false);
-                    ui->Main_push_Sponsoring->setEnabled(false);
-                }
-                else if (gestion.compare("Fournisseurs") == 0) {
-                    ui->Main_push_Personnel->setEnabled(false);
-                    ui->Main_push_Evenement->setEnabled(false);
-                    ui->Main_push_Fournisseur->setEnabled(true);
-                    ui->Main_push_Locaux->setEnabled(false);
-                    ui->Main_push_Sponsoring->setEnabled(false);
-                }
-                else if (gestion.compare("Locaux") == 0) {
-                    ui->Main_push_Personnel->setEnabled(false);
-                    ui->Main_push_Evenement->setEnabled(false);
-                    ui->Main_push_Fournisseur->setEnabled(false);
-                    ui->Main_push_Locaux->setEnabled(true);
-                    ui->Main_push_Sponsoring->setEnabled(false);
-                }
-                else if (gestion.compare("Sponsoring") == 0) {
-                    ui->Main_push_Personnel->setEnabled(false);
-                    ui->Main_push_Evenement->setEnabled(false);
-                    ui->Main_push_Fournisseur->setEnabled(false);
-                    ui->Main_push_Locaux->setEnabled(false);
-                    ui->Main_push_Sponsoring->setEnabled(true);
-                }
-
-                // Set labels for logged-in user information
-                QString NOM = query.value(1).toString();    // Assuming 'NOM' is at index 1
-                QString PRENOM = query.value(2).toString(); // Assuming 'PRENOM' is at index 2
-                ui->Login_label_LoginInfo->setText("Connecté: " + NOM + " " + PRENOM);
-                ui->Main_label_LoggedAs->setText("Logged in as: " + NOM + " " + PRENOM + "\nGestion: " + gestion);
-            }
-            else {
-                ui->Login_label_LoginInfo->setText("CIN ou Password sont incorrects");
-            }
-        }
-
-
-}
-void MainWindow::on_Login_check_PassShowHide_clicked() {
-    if (modes == 1) {
-        ui->Login_line_Password->setEchoMode(QLineEdit::Normal);
-        modes = 0;
-    } else {
-        ui->Login_line_Password->setEchoMode(QLineEdit::Password);
-        modes = 1;
-    }
-}
-
-void MainWindow::on_pushButton_PDF_clicked() {
-    QString strStream;
-    QTextStream out(&strStream);
-
-    const int rowCount = ui->tableView->model()->rowCount();
-    const int columnCount = ui->tableView->model()->columnCount();
-
-    // Start HTML document
-    out << "<html>\n"
-           "<head>\n"
-           "<meta Content=\"Text/html; charset=Windows-1251\">\n"
-           << QString("<title>%1</title>\n").arg("Liste des Employés")
-           << "</head>\n"
-           "<body bgcolor=#ffffff link=#5000A0>\n"
-           "<center> <H1>Liste des Employés</H1></br></br><table border=1 cellspacing=0 cellpadding=2>\n";
-
-    // Add table headers
-    out << "<thead><tr bgcolor=#f0f0f0> <th>Numero</th>";
-    out << "<cellspacing=10 cellpadding=3>";
-    for (int column = 0; column < columnCount; column++) {
-        if (!ui->tableView->isColumnHidden(column)) {
-            out << QString("<th>%1</th>").arg(ui->tableView->model()->headerData(column, Qt::Horizontal).toString());
-        }
-    }
-    out << "</tr></thead>\n";
-
-    // Add table data
-    for (int row = 0; row < rowCount; row++) {
-        out << "<tr> <td bkcolor=0>" << row + 1 << "</td>";
-        for (int column = 0; column < columnCount; column++) {
-            if (!ui->tableView->isColumnHidden(column)) {
-                QString data = ui->tableView->model()->data(ui->tableView->model()->index(row, column)).toString().simplified();
-                out << QString("<td bkcolor=0>%1</td>").arg((!data.isEmpty()) ? data : QString("&nbsp;"));
-            }
-        }
-        out << "</tr>\n";
-    }
-
-    // Close HTML document
-    out << "</table> </center>\n"
-           "</body>\n"
-           "</html>\n";
-
-    // Save the generated HTML as PDF
-    QString fileName = QFileDialog::getSaveFileName((QWidget*)0, "Sauvegarder en PDF", QString(), "*.pdf");
-    if (QFileInfo(fileName).suffix().isEmpty()) { fileName.append(".pdf"); }
-
-    QPrinter printer(QPrinter::PrinterResolution);
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setPaperSize(QPrinter::A4);
-    printer.setOutputFileName(fileName);
-
-    QTextDocument doc;
-    doc.setHtml(strStream);
-    doc.setPageSize(printer.pageRect().size()); // Necessary to fit the content within page boundaries
-    doc.print(&printer);
-}
-
-void MainWindow::on_empl_push_ajouter_clicked() {
-    QString ID_EMPLOYE = ui->empl_line_id->text();
-    QString NOM = ui->empl_line_nom->text();
-    QString PRENOM = ui->empl_line_prenom->text();
-    QString GENDER = ui->empl_line_sexe->text();
-    QString ADRESSE = ui->empl_line_adresse->text();
-    QString POSTE = ui->empl_line_poste->text();
-    QString EMAIL = ui->empl_line_email->text();
-    QString NUM_TEL = ui->empl_line_numtel->text();
-    int ABSENCE = ui->empl_line_nbabsance->value();
-    QDate D_N = ui->empl_date_DN->date();
-    QString PASSWORD = ui->empl_line_mdp->text();
-
-    EMPLOYE E(ID_EMPLOYE, NOM, PRENOM, GENDER, ADRESSE, POSTE, EMAIL, NUM_TEL, ABSENCE, D_N, PASSWORD);
-    bool test = E.ajouter();
-    if (test) {
-        ui->empl_Tableview->setModel(E.afficher());
-        QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("Ajout effectué\nClick Cancel to exit."), QMessageBox::Cancel);
-    } else {
-        QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("Ajout non effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
-    }
-}
-void MainWindow::on_comboBox_employe_activated_currentIndexChanged(const QString &arg1) {
-    QString ID_EMPLOYE = arg1;
+    QString CIN = ui->Login_CIN_Filed->text();
+    QString PASSWORD = ui->Login_MDP_Field->text();
     QSqlQuery query;
-    query.prepare("SELECT * FROM EMPLOYE WHERE ID_EMPLOYE = :ID_EMPLOYE");
-    query.bindValue(":ID_EMPLOYE", ID_EMPLOYE);
-    if (query.exec()) {
-        while (query.next()) {
-            ui->empl_line_id_2->setText(query.value(0).toString());
-            ui->empl_line_nom_2->setText(query.value(1).toString());
-            ui->empl_line_prenom_2->setText(query.value(2).toString());
-            ui->empl_line_sexe_2->setText(query.value(3).toString());
-            ui->empl_line_adresse_2->setText(query.value(4).toString());
-            ui->empl_line_email_2->setText(query.value(5).toString());
-            ui->empl_line_poste_2->setText(query.value(6).toString());
-            ui->empl_line_numtel2->setText(query.value(7).toString());
-            ui->empl_spin_nbabsance_2->setValue(query.value(8).toInt());
-            ui->empl_date_DN_2->setDate(query.value(9).toDate());
-            ui->empl_line_mdp_2->setText(query.value(10).toString());
+    QString gestion;
+    if(query.exec("SELECT * FROM EMPLOYE WHERE CIN='" + CIN + "' AND PASSWORD='" + PASSWORD + "'")) {
+        if (query.next()) {
+            //gestion = query.value(9).toString();
+            ui->stackedWidget->setCurrentIndex(1);
         }
-    } else {
-        QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr("ECHEC DE chargement"), QMessageBox::Cancel);
+        else {
+            ui->label_infoconx->setText("CIN ou Password sont incorrects");
+        }
     }
 }
-void MainWindow::on_empl_push_modifier_clicked() {
-    QString ID_EMPLOYE = ui->empl_line_id_2->text();
-    QString NOM = ui->empl_line_nom_2->text();
-    QString PRENOM = ui->empl_line_prenom_2->text();
-    QString GENDER = ui->empl_line_sexe_2->text();
-    QString ADRESSE = ui->empl_line_adresse_2->text();
-    QString POSTE = ui->empl_line_poste_2->text();
-    QString EMAIL = ui->empl_line_email_2->text();
-    QString NUM_TEL = ui->empl_line_numtel2->text();
-    int ABSENCE = ui->empl_spin_nbabsance_2->value();
-    QDate D_N = ui->empl_date_DN_2->date();
-    QString PASSWORD = ui->empl_line_mdp_2->text();
 
-    EMPLOYE E(ID_EMPLOYE, NOM, PRENOM, GENDER, ADRESSE, POSTE, EMAIL, NUM_TEL, ABSENCE, D_N, PASSWORD);
+
+void MainWindow::on_bt_ajouter_clicked()
+{
+    int CIN = ui->line_ID->text().toInt();
+    QString NOM = ui->line_nom->text();
+    QString PRENOM = ui->line_prenom->text();
+    QDate DATE_NAISSANCE = ui->date_ddn->date();
+    QString VILLE = ui->line_ville->text();
+    QString GESTION = ui->comboBox_Gestion->currentText();
+    QString PASSWORD = ui->line_password->text();
+    QDate DATE_EMBAUCHE = ui->date_emb->date();
+    float SALAIRE = ui->line_salaire->text().toFloat();
+    int NUM_TEL = ui->line_numtel->text().toInt();
+    EMPLOYE E(CIN,NOM,PRENOM,DATE_NAISSANCE,VILLE,PASSWORD,DATE_EMBAUCHE,SALAIRE,NUM_TEL,GESTION);
+    bool test = E.ajouter();
+    if(test){
+        ui->label_info_gestion->setText("Ajout Effectué CIN: "+CIN);
+        ui->table_Employe->setModel(E.afficher());
+        ui->comboBox_IDs->setModel(E.afficher_cin());
+    }else{
+        ui->label_info_gestion->setText("non effectué");
+    }
+}
+
+void MainWindow::on_bt_modifier_clicked()
+{
+    int CIN = ui->line_ID->text().toInt();
+    QString NOM = ui->line_nom->text();
+    QString PRENOM = ui->line_prenom->text();
+    QDate DATE_NAISSANCE = ui->date_ddn->date();
+    QString VILLE = ui->line_ville->text();
+    QString GESTION = ui->comboBox_Gestion->currentText();
+    QString PASSWORD = ui->line_password->text();
+    QDate DATE_EMBAUCHE = ui->date_emb->date();
+    float SALAIRE = ui->line_salaire->text().toFloat();
+    int NUM_TEL = ui->line_numtel->text().toInt();
+    EMPLOYE E(CIN,NOM,PRENOM,DATE_NAISSANCE,VILLE,PASSWORD,DATE_EMBAUCHE,SALAIRE,NUM_TEL,GESTION);
     bool test = E.modifier();
-    if (test) {
-        ui->comboBox_employe->setModel(E.afficher());
-        ui->empl_Tableview->setModel(E.afficher());
-        QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("Modification effectuée\nClick Cancel to exit."), QMessageBox::Cancel);
-    } else {
-        QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("Modification non effectuée.\nClick Cancel to exit."), QMessageBox::Cancel);
+    if(test){
+        ui->label_info_gestion->setText("Modification Effectué CIN: "+CIN);
+        ui->table_Employe->setModel(E.afficher());
+        ui->comboBox_IDs->setModel(E.afficher_cin());
+    }else{
+        ui->label_info_gestion->setText("Modification effectué");
     }
-}
-void MainWindow::on_empl_push_supp_clicked() {
-    EMPLOYE E;
-    E.setID_EMPLOYE(ui->empl_line_supp->text());
-    bool test = E.supprimer(E.getID_EMPLOYE());
-    if (test) {
-        QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("Suppression effectuée\nClick Cancel to exit."), QMessageBox::Cancel);
-    } else {
-        QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("Suppression non effectuée.\nClick Cancel to exit."), QMessageBox::Cancel);
-    }
-}
-void MainWindow::on_empl_push_refresh_clicked() {
-    ui->empl_Tableview->setModel(E.afficher());
 }
 
+void MainWindow::on_bt_supprimer_clicked()
+{
+    EMPLOYE E;
+    E.setCIN_EMPLOYE(ui->comboBox_IDs->currentText().toInt());
+    bool test=E.supprimer(E.getCIN_EMPLOYE());
+    if(test)
+    {
+        ui->label_info_gestion->setText("Suppression Effectué");
+        ui->table_Employe->setModel(E.afficher());
+        ui->comboBox_IDs->setModel(E.afficher_cin());
+    }
+    else
+    {
+        ui->label_info_gestion->setText("Suppression non effectué");
+    }
+}
+
+void MainWindow::on_comboBox_IDs_currentIndexChanged(int index)
+{
+    int CIN = ui->comboBox_IDs->currentText().toInt();
+    QString CIN_1=QString::number(CIN);
+    QSqlQuery query;
+    query.prepare("SELECT * FROM EMPLOYE where CIN='"+CIN_1+"'");
+    if(query.exec())
+    {
+        while (query.next())
+        {
+            ui->line_ID->setText(query.value(0).toString());
+            ui->line_nom->setText(query.value(1).toString());
+            ui->line_prenom->setText(query.value(2).toString());
+            ui->date_ddn->setDate(query.value(3).toDate());
+            ui->line_ville->setText(query.value(4).toString());
+            ui->line_password->setText(query.value(5).toString());
+            ui->date_emb->setDate(query.value(6).toDate());
+            ui->line_salaire->setText(query.value(7).toString());
+            ui->line_numtel->setText(query.value(8).toString());
+            ui->comboBox_Gestion->setCurrentText(query.value(9).toString());
+        }
+    }
+    else
+    {
+        ui->label_info_gestion  ->setText("Echec de chargement");
+    }
+}
+
+void MainWindow::on_bt_Tri_Nom_clicked()
+{
+    ui->label_info_affichage->setText("Tri par NOM effectué");
+    ui->table_Employe->setModel(E.tri_Nom());
+}
+
+void MainWindow::on_bt_Tri_Gestion_clicked()
+{
+    ui->label_info_affichage->setText("Tri par GESTION effectué");
+    ui->table_Employe->setModel(E.tri_Gestion());
+}
+
+void MainWindow::on_bt_Tri_CIN_clicked()
+{
+    ui->label_info_affichage->setText("Tri par CIN effectué");
+    ui->table_Employe->setModel(E.tri_CIN());
+}
+
+
+void MainWindow::on_line_Recherche_textChanged(const QString &arg1)
+{
+    E.clearTable(ui->table_Employe);
+    E.rechercher(ui->table_Employe,arg1);
+}
+
+void MainWindow::on_bt_ExportPDF_clicked()
+{
+    QString currentPath = QDir::currentPath();
+    QString pdfPath = currentPath + "/Liste-Employees.pdf";
+    QString logoPath = currentPath + "/ressource/Logo.png";
+    QPdfWriter pdf(pdfPath);
+    QPainter painter(&pdf);
+    int i = 4000;
+    painter.setPen(Qt::black);
+    painter.setFont(QFont("Arial", 30));
+    painter.drawPixmap(QRect(100,400,2000,2000),QPixmap(logoPath));
+    painter.drawText(3000,1500,"LISTE DES EMPLOYÉS");
+    painter.setPen(Qt::blue);
+    painter.setFont(QFont("Arial", 50));
+    painter.drawRect(2700,200,7000,2600);
+    painter.drawRect(0,3000,9600,500);
+    painter.setPen(Qt::black);
+    painter.setFont(QFont("Arial", 9));
+    painter.drawText(300, 3300, "CIN");
+    painter.drawText(1300, 3300, "Nom");
+    painter.drawText(2000, 3300, "Prenom");
+    painter.drawText(3000, 3300, "DDN");
+    painter.drawText(4000, 3300, "Ville");
+    painter.drawText(4600, 3300, "Password");
+    painter.drawText(5500, 3300, "Date Embauche");
+    painter.drawText(6800, 3300, "Salaire");
+    painter.drawText(7500, 3300, "N° Tel");
+    painter.drawText(8500, 3300, "Gestion");
+    QSqlQuery query;
+    query.prepare("<SELECT CAST( GETDATE() AS Date ) ");
+    time_t tt;
+    struct tm* ti;
+    time(&tt);
+    ti=localtime(&tt);
+    asctime(ti);
+    painter.drawText(500,300, asctime(ti));
+    query.prepare("select * from EMPLOYE");
+    query.exec();
+    while (query.next())
+    {
+        painter.drawText(300, i, query.value(0).toString());
+        painter.drawText(1300, i, query.value(1).toString());
+        painter.drawText(2000, i, query.value(2).toString());
+        painter.drawText(2900, i, query.value(3).toDate().toString("dd/MM/yyyy"));
+        painter.drawText(4000, i, query.value(4).toString());
+        painter.drawText(4800, i, query.value(5).toString());
+        painter.drawText(5600, i, query.value(6).toDate().toString("dd/MM/yyyy"));
+        painter.drawText(6800, i, query.value(7).toString());
+        painter.drawText(7300, i, query.value(8).toString());
+        painter.drawText(8200, i, query.value(9).toString());
+        i = i +500;
+    }
+    int reponse = QMessageBox::question(this, "PDF généré", "Afficher le PDF ?", QMessageBox::Yes |  QMessageBox::No);
+    if (reponse == QMessageBox::Yes)
+    {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(pdfPath));
+        painter.end();
+    }
+    if (reponse == QMessageBox::No)
+    {
+        painter.end();
+    }
+}
+
+void MainWindow::on_Menu_Employes_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(2);
+}
+
+void MainWindow::on_return1_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(1);
+}
