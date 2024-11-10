@@ -231,7 +231,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb
    <widget class="QComboBox" name="comboBox_IDs">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>40</x>
       <y>350</y>
       <width>191</width>
       <height>22</height>

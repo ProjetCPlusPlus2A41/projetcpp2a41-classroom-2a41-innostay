@@ -43,12 +43,14 @@ void MainWindow::on_bt_ajouter_clicked()
     QString PRENOM = ui->line_prenom->text();
     QString EMAIL = ui->line_email->text();
     int NUMTEL = ui->line_numtel->text().toInt();
+
     QString CIN_String = ui->line_ID->text();
     QString NUMTEL_String = ui->line_numtel->text();
     if(NUMTEL_String.isEmpty()||EMAIL.isEmpty()||CIN_String.isEmpty()||CIN == 0||NOM.isEmpty()||PRENOM.isEmpty()){
         ui->label_info_gestion->setText("Erreur de controle de saisire");
         return;
     }
+
     Client C(CIN,NOM,PRENOM,EMAIL,NUMTEL);
     bool test = C.ajouter();
     if(test){
@@ -56,7 +58,7 @@ void MainWindow::on_bt_ajouter_clicked()
         ui->table_Clients->setModel(C.afficher());
         ui->comboBox_IDs->setModel(C.afficher_cin());
     }else{
-        ui->label_info_gestion->setText("non effectué");
+        ui->label_info_gestion->setText("ajout non effectué");
     }
 }
 
@@ -80,7 +82,7 @@ void MainWindow::on_bt_modifier_clicked()
         ui->table_Clients->setModel(C.afficher());
         ui->comboBox_IDs->setModel(C.afficher_cin());
     }else{
-        ui->label_info_gestion->setText("Modification effectué");
+        ui->label_info_gestion->setText("Modification non effectué");
     }
 }
 
@@ -134,14 +136,14 @@ void MainWindow::on_line_Recherche_textChanged(const QString &arg1)
 void MainWindow::on_bt_Tri_Nom_clicked()
 {
     ui->label_info_gestion->setText("Tri par NOM effectué");
-    ui->table_Clients->setModel(C.tri_CIN());
+    ui->table_Clients->setModel(C.tri_Nom());
 }
 
 
 void MainWindow::on_bt_Tri_CIN_clicked()
 {
     ui->label_info_gestion->setText("Tri par CIN effectué");
-    ui->table_Clients->setModel(C.tri_Nom());
+    ui->table_Clients->setModel(C.tri_CIN());
 }
 
 void MainWindow::on_bt_ExportPDF_clicked()
