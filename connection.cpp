@@ -5,9 +5,9 @@
 Connection::Connection() {
 
     db = QSqlDatabase::addDatabase("QODBC"); // Initialize the database connection only once
-    db.setDatabaseName("ProjectCPP");
-    db.setUserName("Raydux");
-    db.setPassword("Raydux");
+    db.setDatabaseName("smarthotel");
+    db.setUserName("yassmine");
+    db.setPassword("yassmine");
 }
 
 bool Connection::CreateConnexion() {
