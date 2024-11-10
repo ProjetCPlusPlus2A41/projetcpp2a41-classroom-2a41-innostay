@@ -14,7 +14,7 @@ EMPLOYE::EMPLOYE()
     NUM_TEL = 0;
     GESTION = "";
     CIN = 0;
-    SALAIRE = 0.0;
+    SALAIRE = 0;
     DATE_NAISSANCE = QDate();
     DATE_EMBAUCHE = QDate();
 }

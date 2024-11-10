@@ -78,8 +78,9 @@ void MainWindow::on_bt_ajouter_clicked()
     QString GESTION = ui->comboBox_Gestion->currentText();
     QString PASSWORD = ui->line_password->text();
     QDate DATE_EMBAUCHE = ui->date_emb->date();
-    float SALAIRE = ui->line_salaire->text().toFloat();
+    int SALAIRE = ui->line_salaire->text().toInt();
     int NUM_TEL = ui->line_numtel->text().toInt();
+
     QString SALAIRE_String = ui->line_salaire->text();
     QString CIN_String = ui->line_ID->text();
     QString NUM_TEL_String = ui->line_numtel->text();
@@ -87,14 +88,15 @@ void MainWindow::on_bt_ajouter_clicked()
         ui->label_info_gestion->setText("Erreur de controle de saisire");
         return;
     }
+
     EMPLOYE E(CIN,NOM,PRENOM,DATE_NAISSANCE,VILLE,PASSWORD,DATE_EMBAUCHE,SALAIRE,NUM_TEL,GESTION);
     bool test = E.ajouter();
     if(test){
-        ui->label_info_gestion->setText("Ajout Effectué CIN: "+CIN);
+        ui->label_info_gestion->setText("Ajout Effectué");
         ui->table_Employe->setModel(E.afficher());
         ui->comboBox_IDs->setModel(E.afficher_cin());
     }else{
-        ui->label_info_gestion->setText("non effectué");
+        ui->label_info_gestion->setText("Ajout non effectué");
     }
 }
 
@@ -108,7 +110,7 @@ void MainWindow::on_bt_modifier_clicked()
     QString GESTION = ui->comboBox_Gestion->currentText();
     QString PASSWORD = ui->line_password->text();
     QDate DATE_EMBAUCHE = ui->date_emb->date();
-    float SALAIRE = ui->line_salaire->text().toFloat();
+    int SALAIRE = ui->line_salaire->text().toInt();
     int NUM_TEL = ui->line_numtel->text().toInt();
     QString SALAIRE_String = ui->line_salaire->text();
     QString CIN_String = ui->line_ID->text();
@@ -120,7 +122,7 @@ void MainWindow::on_bt_modifier_clicked()
     EMPLOYE E(CIN,NOM,PRENOM,DATE_NAISSANCE,VILLE,PASSWORD,DATE_EMBAUCHE,SALAIRE,NUM_TEL,GESTION);
     bool test = E.modifier();
     if(test){
-        ui->label_info_gestion->setText("Modification Effectué CIN: "+CIN);
+        ui->label_info_gestion->setText("Modification Effectué");
         ui->table_Employe->setModel(E.afficher());
         ui->comboBox_IDs->setModel(E.afficher_cin());
     }else{

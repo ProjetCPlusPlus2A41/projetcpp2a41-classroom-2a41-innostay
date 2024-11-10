@@ -9,8 +9,7 @@
 class EMPLOYE
 {
     QString NOM,PRENOM,VILLE,PASSWORD,GESTION;
-    int CIN,NUM_TEL;
-    float SALAIRE;
+    int CIN,NUM_TEL,SALAIRE;
     QDate DATE_NAISSANCE,DATE_EMBAUCHE;
 public:
     EMPLOYE();
@@ -23,7 +22,7 @@ public:
     QString getVILLE() { return VILLE; }
     QString getPASSWORD() { return PASSWORD; }
     QDate getDATE_EMBAUCHE() { return DATE_EMBAUCHE; }
-    float getSALAIRE() {  return SALAIRE; }
+    int getSALAIRE() {  return SALAIRE; }
     int getNUM_TEL() { return NUM_TEL; }
     QString getGESTION() { return GESTION; }
 
@@ -35,7 +34,7 @@ public:
     void setVILLE(QString VILLE) { this->VILLE = VILLE; }
     void setPASSWORD(QString PASSWORD) { this->PASSWORD = PASSWORD; }
     void setDATE_EMBAUCHE(QDate DATE_EMBAUCHE) { this->DATE_EMBAUCHE = DATE_EMBAUCHE; }
-    void setSALAIRE(float SALAIRE) { this->SALAIRE = SALAIRE; }
+    void setSALAIRE(int SALAIRE) { this->SALAIRE = SALAIRE; }
     void setNUM_TEL(int NUM_TEL) { this->NUM_TEL = NUM_TEL; }
     void setGESTION(QString GESTION) { this->GESTION = GESTION; }
 
