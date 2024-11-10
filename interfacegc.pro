@@ -1,7 +1,9 @@
 QT       += core gui sql printsupport multimedia multimediawidgets charts printsupport widgets axcontainer
 
+TEMPLATE = app
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+QT += core gui widgets sql
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
@@ -16,14 +18,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    client.cpp \
     connection.cpp \
+    employe.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
-    client.h \
     connection.h \
+    employe.h \
     mainwindow.h
 
 FORMS += \
@@ -35,4 +37,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    Resources.qrc
+    ressources.qrc
+QT += sql
+
+DISTFILES += \
+    ressource/background-image.png
