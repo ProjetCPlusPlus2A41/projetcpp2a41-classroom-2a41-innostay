@@ -32,7 +32,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="Login">
      <widget class="QLabel" name="Background_image">
@@ -594,7 +594,7 @@ QTabBar::tab:left:last, QTabBar::tab:right:last,QTabBar::tab:left:only-one, QTab
 }</string>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">

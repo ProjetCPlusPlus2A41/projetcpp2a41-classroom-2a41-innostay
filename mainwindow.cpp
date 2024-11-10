@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->Login_CIN_Filed->setValidator( new QIntValidator(0, 99999999, this));
     ui->line_ID->setValidator( new QIntValidator(0, 99999999, this));
     ui->line_numtel->setValidator( new QIntValidator(0, 99999999, this));
-    ui->line_salaire->setValidator( new QIntValidator(0, 99999999, this));
+   // ui->line_salaire->setValidator( new QIntValidator(0, 99999999, this));
     ui->line_salaire->setValidator(new QDoubleValidator(0, 99999999, 2, this));
     ui->stackedWidget->setCurrentIndex(0);
 }
