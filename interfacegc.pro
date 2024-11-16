@@ -1,5 +1,4 @@
-QT       += core gui sql printsupport multimedia multimediawidgets printsupport widgets axcontainer
-
+QT       += core gui sql printsupport multimedia multimediawidgets printsupport widgets axcontainer charts
 TEMPLATE = app
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -19,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     connection.cpp \
+    dialog_statistiques.cpp \
     employe.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -27,12 +27,14 @@ SOURCES += \
 
 HEADERS += \
     connection.h \
+    dialog_statistiques.h \
     employe.h \
     mainwindow.h \
     resetpass.h \
     smtp.h
 
 FORMS += \
+    dialog_statistiques.ui \
     mainwindow.ui \
     resetpass.ui
 

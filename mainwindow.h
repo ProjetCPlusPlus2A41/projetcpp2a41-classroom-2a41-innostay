@@ -7,6 +7,7 @@
 #include <QString>
 #include <QSqlQuery>
 #include "resetpass.h"
+#include "dialog_statistiques.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -38,9 +39,12 @@ private slots:
 
     void on_Login_ResetPass_clicked();
 
+    void on_bt_Stats_clicked();
+
 private:
     Ui::MainWindow *ui;
     EMPLOYE E;
     Resetpass *RP;
+    Dialog_Statistiques *DS;
 };
 #endif // MAINWINDOW_H

@@ -281,3 +281,11 @@ void MainWindow::on_Login_ResetPass_clicked()
     RP->setWindowTitle("Reset Password");
     RP->show();
 }
+
+void MainWindow::on_bt_Stats_clicked()
+{
+    DS = new Dialog_Statistiques();
+    DS->setWindowTitle("Statistique");
+    DS->choix_pie();
+    DS->show();
+}
