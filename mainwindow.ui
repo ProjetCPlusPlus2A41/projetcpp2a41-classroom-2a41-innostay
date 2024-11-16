@@ -231,7 +231,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb
    <widget class="QComboBox" name="comboBox_IDs">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>50</x>
       <y>350</y>
       <width>191</width>
       <height>22</height>
@@ -579,6 +579,34 @@ color:white;</string>
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QPushButton" name="bt_stat">
+    <property name="geometry">
+     <rect>
+      <x>1070</x>
+      <y>670</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+background-color: rgba(20, 9, 97, 200);
+border-radius: 10px;
+color:white;
+}
+QPushButton:hover {
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(117, 201, 187, 200), stop:1 rgba(20, 9, 97, 200));
+}</string>
+    </property>
+    <property name="text">
+     <string>Statistique</string>
+    </property>
+   </widget>
    <zorder>label</zorder>
    <zorder>Background_image_2</zorder>
    <zorder>Background_image_3</zorder>
@@ -594,6 +622,7 @@ color:white;</string>
    <zorder>groupBox</zorder>
    <zorder>bt_ajouter</zorder>
    <zorder>labe_TitlePerso</zorder>
+   <zorder>bt_stat</zorder>
   </widget>
  </widget>
  <resources/>

@@ -33,6 +33,7 @@ public:
     QSqlQueryModel* afficher_cin();
     QSqlQueryModel* tri_CIN();
     QSqlQueryModel* tri_Nom();
+    void postrequest(QString smsmsg,QString phonenumber);
     void clearTable (QTableView* table);
     void rechercher(QTableView *table,QString x);
 

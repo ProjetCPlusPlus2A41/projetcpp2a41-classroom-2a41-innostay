@@ -17,6 +17,16 @@
 #include <QPainter>
 #include <QPdfWriter>
 #include <QDir>
+#include <QChartView>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QLegend>
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QHorizontalStackedBarSeries>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QCategoryAxis>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -43,22 +53,24 @@ void MainWindow::on_bt_ajouter_clicked()
     QString PRENOM = ui->line_prenom->text();
     QString EMAIL = ui->line_email->text();
     int NUMTEL = ui->line_numtel->text().toInt();
-
     QString CIN_String = ui->line_ID->text();
     QString NUMTEL_String = ui->line_numtel->text();
     if(NUMTEL_String.isEmpty()||EMAIL.isEmpty()||CIN_String.isEmpty()||CIN == 0||NOM.isEmpty()||PRENOM.isEmpty()){
         ui->label_info_gestion->setText("Erreur de controle de saisire");
         return;
     }
-
     Client C(CIN,NOM,PRENOM,EMAIL,NUMTEL);
+    ui->label_info_gestion->setText("Ajout Effectué CIN: "+CIN);
+        C.postrequest("Hello! "+NOM+" "+PRENOM+
+                      ", your account has been successfuly created! ",ui->line_numtel->text());
     bool test = C.ajouter();
     if(test){
-        ui->label_info_gestion->setText("Ajout Effectué CIN: "+CIN);
+
+
         ui->table_Clients->setModel(C.afficher());
         ui->comboBox_IDs->setModel(C.afficher_cin());
     }else{
-        ui->label_info_gestion->setText("ajout non effectué");
+        ui->label_info_gestion->setText("non effectué");
     }
 }
 
@@ -82,7 +94,7 @@ void MainWindow::on_bt_modifier_clicked()
         ui->table_Clients->setModel(C.afficher());
         ui->comboBox_IDs->setModel(C.afficher_cin());
     }else{
-        ui->label_info_gestion->setText("Modification non effectué");
+        ui->label_info_gestion->setText("Modification effectué");
     }
 }
 
@@ -136,14 +148,14 @@ void MainWindow::on_line_Recherche_textChanged(const QString &arg1)
 void MainWindow::on_bt_Tri_Nom_clicked()
 {
     ui->label_info_gestion->setText("Tri par NOM effectué");
-    ui->table_Clients->setModel(C.tri_Nom());
+    ui->table_Clients->setModel(C.tri_CIN());
 }
 
 
 void MainWindow::on_bt_Tri_CIN_clicked()
 {
     ui->label_info_gestion->setText("Tri par CIN effectué");
-    ui->table_Clients->setModel(C.tri_CIN());
+    ui->table_Clients->setModel(C.tri_Nom());
 }
 
 void MainWindow::on_bt_ExportPDF_clicked()
@@ -199,4 +211,80 @@ void MainWindow::on_bt_ExportPDF_clicked()
         painter.end();
     }
 
+}
+QChartView* MainWindow::Client_choix_pie() {
+    QChartView *chartView;
+    QSqlQuery query;
+    qreal tot = 0, ooredooCount = 0, telecomCount = 0, orangeCount = 0;
+
+    // Get the total count of records
+    query.prepare("SELECT COUNT(*) FROM CLIENT WHERE NUMTEL IS NOT NULL AND NUMTEL != ''");
+    if (query.exec() && query.next()) {
+        tot = query.value(0).toDouble();
+    }
+
+    // Get the counts for each category based on the prefix
+    query.prepare("SELECT NUMTEL FROM CLIENT WHERE NUMTEL IS NOT NULL AND NUMTEL != ''");
+    if (query.exec()) {
+        while (query.next()) {
+            QString numTel = query.value(0).toString();
+
+            if (numTel.startsWith("2")) {
+                ooredooCount++;
+            } else if (numTel.startsWith("9")) {
+                telecomCount++;
+            } else if (numTel.startsWith("5")) {
+                orangeCount++;
+            }
+        }
+    }
+
+    // Calculate proportions
+    qreal c1 = (tot > 0) ? (ooredooCount / tot) : 0;
+    qreal c2 = (tot > 0) ? (telecomCount / tot) : 0;
+    qreal c3 = (tot > 0) ? (orangeCount / tot) : 0;
+
+    // Create the pie chart series
+    QPieSeries *series = new QPieSeries();
+    series->append("Ooredoo", c1);
+    series->append("Telecom", c2);
+    series->append("Orange", c3);
+
+    // Make the labels visible within each slice
+    for (QPieSlice *slice : series->slices()) {
+        slice->setLabelVisible();
+        slice->setLabel(QString("%1: %2%").arg(slice->label()).arg(slice->percentage() * 100, 0, 'f', 1));
+    }
+
+    // Set up the chart
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->legend();
+    chart->setAnimationOptions(QChart::AllAnimations);
+    chart->setTheme(QChart::ChartThemeQt);
+
+    // Create the chart view
+    chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    chartView->setMinimumSize(570, 570);
+
+    return chartView; // Return the chart view
+}
+
+
+
+
+void MainWindow::on_bt_stat_clicked()
+{
+    QDialog *popup = new QDialog(this);
+       popup->setWindowTitle("Statistics");
+       popup->setMinimumSize(600, 600); // Adjust the size as needed
+
+       // Call the function to create the chart and set it in the dialog
+       QChartView *chartView = Client_choix_pie();
+       QVBoxLayout *layout = new QVBoxLayout(popup);
+       layout->addWidget(chartView);
+
+       // Display the dialog window as a popup
+       popup->exec(); // Use exec() for a modal dialog, or show() for a non-modal
 }

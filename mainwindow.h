@@ -6,7 +6,17 @@
 #include <QList>
 #include <QString>
 #include <QSqlQuery>
-
+#include <QtCharts/QChartView>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QLegend>
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QHorizontalStackedBarSeries>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QCategoryAxis>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
+QT_CHARTS_USE_NAMESPACE
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -35,6 +45,10 @@ private slots:
     void on_bt_Tri_CIN_clicked();
 
     void on_bt_ExportPDF_clicked();
+
+    void on_bt_stat_clicked();
+
+     QChartView* Client_choix_pie();
 
 private:
     Ui::MainWindow *ui;

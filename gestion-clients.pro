@@ -1,4 +1,4 @@
-QT       += core gui sql printsupport multimedia multimediawidgets charts printsupport widgets axcontainer
+QT       += core gui sql printsupport multimedia multimediawidgets charts printsupport widgets axcontainer charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
