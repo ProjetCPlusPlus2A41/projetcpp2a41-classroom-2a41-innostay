@@ -6,6 +6,7 @@
 #include <QList>
 #include <QString>
 #include <QSqlQuery>
+#include "resetpass.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -35,9 +36,11 @@ private slots:
 
     void on_return1_clicked();
 
+    void on_Login_ResetPass_clicked();
+
 private:
     Ui::MainWindow *ui;
     EMPLOYE E;
-
+    Resetpass *RP;
 };
 #endif // MAINWINDOW_H

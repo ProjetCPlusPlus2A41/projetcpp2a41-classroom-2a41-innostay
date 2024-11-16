@@ -21,15 +21,20 @@ SOURCES += \
     connection.cpp \
     employe.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    resetpass.cpp \
+    smtp.cpp
 
 HEADERS += \
     connection.h \
     employe.h \
-    mainwindow.h
+    mainwindow.h \
+    resetpass.h \
+    smtp.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    resetpass.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

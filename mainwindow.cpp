@@ -18,6 +18,7 @@
 #include <QPainter>
 #include <QPdfWriter>
 #include <QDir>
+#include "smtp.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -30,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->Login_CIN_Filed->setValidator( new QIntValidator(0, 99999999, this));
     ui->line_ID->setValidator( new QIntValidator(0, 99999999, this));
     ui->line_numtel->setValidator( new QIntValidator(0, 99999999, this));
-   // ui->line_salaire->setValidator( new QIntValidator(0, 99999999, this));
+    // ui->line_salaire->setValidator( new QIntValidator(0, 99999999, this));
     ui->line_salaire->setValidator(new QDoubleValidator(0, 99999999, 2, this));
     ui->stackedWidget->setCurrentIndex(0);
 }
@@ -272,4 +273,11 @@ void MainWindow::on_Menu_Employes_clicked()
 void MainWindow::on_return1_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_Login_ResetPass_clicked()
+{
+    RP = new Resetpass();
+    RP->setWindowTitle("Reset Password");
+    RP->show();
 }
