@@ -1,4 +1,4 @@
-QT       += core gui sql printsupport multimedia multimediawidgets printsupport widgets axcontainer charts
+QT       += core gui sql printsupport multimedia multimediawidgets printsupport widgets axcontainer charts svg
 TEMPLATE = app
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,6 +22,10 @@ SOURCES += \
     employe.cpp \
     main.cpp \
     mainwindow.cpp \
+    qrcode.cpp \
+    qrcodegeneratordemo.cpp \
+    qrcodegeneratorworker.cpp \
+    qrwidget.cpp \
     resetpass.cpp \
     smtp.cpp
 
@@ -30,6 +34,8 @@ HEADERS += \
     dialog_statistiques.h \
     employe.h \
     mainwindow.h \
+    qrcode.h \
+    qrwidget.h \
     resetpass.h \
     smtp.h
 

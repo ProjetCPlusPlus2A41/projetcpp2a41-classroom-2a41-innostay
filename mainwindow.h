@@ -40,7 +40,6 @@ private slots:
     void on_Login_ResetPass_clicked();
 
     void on_bt_Stats_clicked();
-
 private:
     Ui::MainWindow *ui;
     EMPLOYE E;

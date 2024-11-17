@@ -19,6 +19,11 @@
 #include <QPdfWriter>
 #include <QDir>
 #include "smtp.h"
+#include "qrcode.h"
+#include "qrwidget.h"
+#include <fstream>
+
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -151,10 +156,11 @@ void MainWindow::on_bt_supprimer_clicked()
 void MainWindow::on_comboBox_IDs_currentIndexChanged(int index)
 {
     int CIN = ui->comboBox_IDs->currentText().toInt();
-    QString CIN_1=QString::number(CIN);
+    QString CIN_1 = QString::number(CIN);
     QSqlQuery query;
-    query.prepare("SELECT * FROM EMPLOYE where CIN='"+CIN_1+"'");
-    if(query.exec())
+    query.prepare("SELECT * FROM EMPLOYE WHERE CIN='" + CIN_1 + "'");
+
+    if (query.exec())
     {
         while (query.next())
         {
@@ -168,11 +174,24 @@ void MainWindow::on_comboBox_IDs_currentIndexChanged(int index)
             ui->line_salaire->setText(query.value(7).toString());
             ui->line_numtel->setText(query.value(8).toString());
             ui->comboBox_Gestion->setCurrentText(query.value(9).toString());
+            QString EncodingMSG =CIN_1+" | "+query.value(1).toString()+" "+query.value(2).toString()+" | "+query.value(3).toDate().toString("dd/MM/yyyy")+" | "+query.value(8).toString()+" | "+query.value(9).toString();
+            const qrcodegen::QrCode qr = qrcodegen::QrCode::encodeText(EncodingMSG.toStdString().c_str(), qrcodegen::QrCode::Ecc::LOW);
+            std::ofstream myfile;
+            myfile.open("qrcode.svg");
+            myfile << qr.toSvgString(1);
+            myfile.close();
+
+            QSvgRenderer svgRenderer(QString("qrcode.svg"));
+            QPixmap pix(QSize(90, 90));
+            QPainter pixPainter(&pix);
+            pixPainter.setRenderHint(QPainter::Antialiasing);
+            svgRenderer.render(&pixPainter);
+            ui->qrcode->setPixmap(pix);
         }
     }
     else
     {
-        ui->label_info_gestion  ->setText("Echec de chargement");
+        ui->label_info_gestion->setText("Echec de chargement");
     }
 }
 

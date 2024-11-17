@@ -625,7 +625,7 @@ QTabBar::tab:left:last, QTabBar::tab:right:last,QTabBar::tab:left:only-one, QTab
 }</string>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1095,7 +1095,7 @@ border-radius: 5px;
        <widget class="QPushButton" name="bt_ajouter">
         <property name="geometry">
          <rect>
-          <x>670</x>
+          <x>600</x>
           <y>240</y>
           <width>151</width>
           <height>31</height>
@@ -1118,7 +1118,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb
        <widget class="QPushButton" name="bt_modifier">
         <property name="geometry">
          <rect>
-          <x>670</x>
+          <x>600</x>
           <y>280</y>
           <width>151</width>
           <height>31</height>
@@ -1141,7 +1141,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb
        <widget class="QPushButton" name="bt_supprimer">
         <property name="geometry">
          <rect>
-          <x>670</x>
+          <x>600</x>
           <y>320</y>
           <width>151</width>
           <height>31</height>
@@ -1164,7 +1164,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb
        <widget class="QComboBox" name="comboBox_IDs">
         <property name="geometry">
          <rect>
-          <x>650</x>
+          <x>580</x>
           <y>170</y>
           <width>191</width>
           <height>22</height>
@@ -1189,7 +1189,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb
        <widget class="QLabel" name="label_info_gestion">
         <property name="geometry">
          <rect>
-          <x>530</x>
+          <x>470</x>
           <y>80</y>
           <width>401</width>
           <height>31</height>
@@ -1203,6 +1203,48 @@ border-radius: 1px;
         </property>
         <property name="text">
          <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="qrcode">
+        <property name="geometry">
+         <rect>
+          <x>920</x>
+          <y>170</y>
+          <width>222</width>
+          <height>222</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgba(35,10,152, 0);
+border: 1px solid #230a98;
+border-radius: 1px;
+</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_16">
+        <property name="geometry">
+         <rect>
+          <x>920</x>
+          <y>130</y>
+          <width>221</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>QR Code </string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
