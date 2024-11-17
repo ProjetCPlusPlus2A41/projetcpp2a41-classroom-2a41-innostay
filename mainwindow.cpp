@@ -180,7 +180,6 @@ void MainWindow::on_comboBox_IDs_currentIndexChanged(int index)
             myfile.open("qrcode.svg");
             myfile << qr.toSvgString(1);
             myfile.close();
-
             QSvgRenderer svgRenderer(QString("qrcode.svg"));
             QPixmap pix(QSize(90, 90));
             QPainter pixPainter(&pix);
