@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/images">
         <file>resources/BG1.png</file>
+        <file>resources/plus.png</file>
+        <file>resources/moins.png</file>
+        <file>resources/BG2.png</file>
     </qresource>
 </RCC>

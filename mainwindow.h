@@ -50,6 +50,8 @@ private slots:
 
      QChartView* Client_choix_pie();
 
+     void on_bt_points_clicked();
+
 private:
     Ui::MainWindow *ui;
     Client C;

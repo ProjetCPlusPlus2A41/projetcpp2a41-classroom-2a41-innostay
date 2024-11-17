@@ -1,5 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "dialog.h" // Replace with your dialog UI's header file
+#include <QDialog>
+
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QIcon>
@@ -55,12 +58,13 @@ void MainWindow::on_bt_ajouter_clicked()
     int NUMTEL = ui->line_numtel->text().toInt();
     QString CIN_String = ui->line_ID->text();
     QString NUMTEL_String = ui->line_numtel->text();
+    int PTS_FIDEL = ui->line_points->text().toInt();
     if(NUMTEL_String.isEmpty()||EMAIL.isEmpty()||CIN_String.isEmpty()||CIN == 0||NOM.isEmpty()||PRENOM.isEmpty()){
         ui->label_info_gestion->setText("Erreur de controle de saisire");
         return;
     }
-    Client C(CIN,NOM,PRENOM,EMAIL,NUMTEL);
-    ui->label_info_gestion->setText("Ajout Effectué CIN: "+CIN);
+    Client C(CIN,NOM,PRENOM,EMAIL,NUMTEL,PTS_FIDEL);
+    ui->label_info_gestion->setText("Ajout Effectué CIN: "+CIN_String);
         C.postrequest("Hello! "+NOM+" "+PRENOM+
                       ", your account has been successfuly created! ",ui->line_numtel->text());
     bool test = C.ajouter();
@@ -83,14 +87,15 @@ void MainWindow::on_bt_modifier_clicked()
     int NUMTEL = ui->line_numtel->text().toInt();
     QString CIN_String = ui->line_ID->text();
     QString NUMTEL_String = ui->line_numtel->text();
+    int PTS_FIDEL = ui->line_points->text().toInt();
     if(NUMTEL_String.isEmpty()||EMAIL.isEmpty()||CIN_String.isEmpty()||CIN == 0||NOM.isEmpty()||PRENOM.isEmpty()){
         ui->label_info_gestion->setText("Erreur de controle de saisire");
         return;
     }
-    Client C(CIN,NOM,PRENOM,EMAIL,NUMTEL);
+    Client C(CIN,NOM,PRENOM,EMAIL,NUMTEL,PTS_FIDEL);
     bool test = C.modifier();
     if(test){
-        ui->label_info_gestion->setText("Modification Effectué CIN: "+CIN);
+        ui->label_info_gestion->setText("Modification Effectué CIN: "+CIN_String);
         ui->table_Clients->setModel(C.afficher());
         ui->comboBox_IDs->setModel(C.afficher_cin());
     }else{
@@ -130,6 +135,7 @@ void MainWindow::on_comboBox_IDs_currentIndexChanged(int index)
             ui->line_prenom->setText(query.value(2).toString());
             ui->line_email->setText(query.value(3).toString());
             ui->line_numtel->setText(query.value(4).toString());
+            ui->line_points->setText(query.value(5).toString());
         }
     }
     else
@@ -288,3 +294,22 @@ void MainWindow::on_bt_stat_clicked()
        // Display the dialog window as a popup
        popup->exec(); // Use exec() for a modal dialog, or show() for a non-modal
 }
+
+
+void MainWindow::on_bt_points_clicked()
+{
+    // Open the dialog
+    Dialog dialog(this);
+
+    // Execute the dialog
+    if (dialog.exec() == QDialog::Accepted) {
+        // Perform the required updates after the dialog is closed with "OK"
+        setWindowTitle("INNOSTAY");
+        ui->table_Clients->setModel(C.afficher());
+        ui->table_Clients->setColumnWidth(3, 250);
+        ui->comboBox_IDs->setModel(C.afficher_cin());
+        ui->line_ID->setValidator(new QIntValidator(0, 99999999, this));
+        ui->line_numtel->setValidator(new QIntValidator(0, 99999999, this));
+    }
+}
+
