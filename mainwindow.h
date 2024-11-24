@@ -16,7 +16,7 @@
 #include <QtCharts/QCategoryAxis>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QPieSlice>
-QT_CHARTS_USE_NAMESPACE
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -46,11 +46,12 @@ private slots:
 
     void on_bt_ExportPDF_clicked();
 
+
     void on_bt_stat_clicked();
 
-     QChartView* Client_choix_pie();
+    QChartView* Client_choix_pie();
 
-     void on_bt_points_clicked();
+    void on_bt_points_clicked();
 
 private:
     Ui::MainWindow *ui;

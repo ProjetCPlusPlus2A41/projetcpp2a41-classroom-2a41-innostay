@@ -153,6 +153,7 @@ void Client::postrequest(QString smsmsg, QString phonenumber) {
     QEventLoop eventLoop;
     QNetworkAccessManager mgr;
     QObject::connect(&mgr, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
+
     QString accountSid = "XXXXXXXX";
     QString authToken = "XXXXXXXXX";
     QString fromNumber = "+12523620019";

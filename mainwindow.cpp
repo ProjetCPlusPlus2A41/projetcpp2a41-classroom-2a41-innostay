@@ -66,12 +66,10 @@ void MainWindow::on_bt_ajouter_clicked()
     }
     Client C(CIN,NOM,PRENOM,EMAIL,NUMTEL,PTS_FIDEL);
     ui->label_info_gestion->setText("Ajout Effectué CIN: "+CIN_String);
-        C.postrequest("Hello! "+NOM+" "+PRENOM+
-                      ", your account has been successfuly created! ",ui->line_numtel->text());
     bool test = C.ajouter();
     if(test){
-
-
+        C.postrequest("Hello! "+NOM+" "+PRENOM+
+                     ", your account has been successfuly created! ",ui->line_numtel->text());
         ui->table_Clients->setModel(C.afficher());
         ui->comboBox_IDs->setModel(C.afficher_cin());
     }else{
@@ -225,17 +223,15 @@ QChartView* MainWindow::Client_choix_pie() {
     qreal tot = 0, ooredooCount = 0, telecomCount = 0, orangeCount = 0;
 
     // Get the total count of records
-    query.prepare("SELECT COUNT(*) FROM CLIENT WHERE NUMTEL IS NOT NULL AND NUMTEL != ''");
+    query.prepare("SELECT COUNT(*) FROM client WHERE numtel IS NOT NULL");
     if (query.exec() && query.next()) {
         tot = query.value(0).toDouble();
     }
-
     // Get the counts for each category based on the prefix
-    query.prepare("SELECT NUMTEL FROM CLIENT WHERE NUMTEL IS NOT NULL AND NUMTEL != ''");
+    query.prepare("SELECT numtel FROM client WHERE numtel IS NOT NULL");
     if (query.exec()) {
         while (query.next()) {
             QString numTel = query.value(0).toString();
-
             if (numTel.startsWith("2")) {
                 ooredooCount++;
             } else if (numTel.startsWith("9")) {
@@ -250,7 +246,6 @@ QChartView* MainWindow::Client_choix_pie() {
     qreal c1 = (tot > 0) ? (ooredooCount / tot) : 0;
     qreal c2 = (tot > 0) ? (telecomCount / tot) : 0;
     qreal c3 = (tot > 0) ? (orangeCount / tot) : 0;
-
     // Create the pie chart series
     QPieSeries *series = new QPieSeries();
     series->append("Ooredoo", c1);
@@ -262,19 +257,14 @@ QChartView* MainWindow::Client_choix_pie() {
         slice->setLabelVisible();
         slice->setLabel(QString("%1: %2%").arg(slice->label()).arg(slice->percentage() * 100, 0, 'f', 1));
     }
-
-    // Set up the chart
     QChart *chart = new QChart();
     chart->addSeries(series);
     chart->legend();
     chart->setAnimationOptions(QChart::AllAnimations);
     chart->setTheme(QChart::ChartThemeQt);
-
-    // Create the chart view
     chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->setMinimumSize(570, 570);
-
     return chartView; // Return the chart view
 }
 
