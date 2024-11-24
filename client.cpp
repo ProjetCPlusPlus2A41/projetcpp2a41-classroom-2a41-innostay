@@ -8,6 +8,8 @@
 #include <QDebug>
 #include <QUrlQuery>
 #include <QStandardItemModel>
+#include <QSqlError>
+
 Client::Client()
 {
     CIN = 0;
@@ -30,13 +32,14 @@ Client::Client(int CIN,QString NOM,QString PRENOM,QString EMAIL,int NUMTEL,int P
 bool Client::ajouter()
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO CLIENT (CIN, NOM, PRENOM, EMAIL, NUMTEL, PTS_FIDEL) VALUES (:CIN, :NOM, :PRENOM, :EMAIL, :NUMTEL, :PTS_FIDEL)");
+    query.prepare("INSERT INTO CLIENT (CIN, NOM, PRENOM, EMAIL, NUMTEL, PTS_FIDEL, DATE_CREATION) VALUES (:CIN, :NOM, :PRENOM, :EMAIL, :NUMTEL, :PTS_FIDEL, :DATE_CREATION)");
     query.bindValue(":CIN", CIN);
     query.bindValue(":NOM", NOM);
     query.bindValue(":PRENOM", PRENOM);
     query.bindValue(":EMAIL", EMAIL);
     query.bindValue(":NUMTEL", NUMTEL);
     query.bindValue(":PTS_FIDEL", PTS_FIDEL);
+    query.bindValue(":DATE_CREATION", QDate::currentDate());
     return query.exec();
 }
 
@@ -60,14 +63,10 @@ bool Client::supprimer(int CIN)
     return query.exec();
 }
 
-
 QStandardItemModel* Client::afficher()
 {
     QStandardItemModel* model = new QStandardItemModel();
-
-    // Set column headers
     model->setHorizontalHeaderLabels({"CIN", "NOM", "PRENOM", "EMAIL", "NUMTEL", "PTS_FIDEL"});
-
     QSqlQuery query;
     query.prepare("SELECT CIN, NOM, PRENOM, EMAIL, NUMTEL, PTS_FIDEL FROM CLIENT");
     if (query.exec()) {
@@ -80,14 +79,9 @@ QStandardItemModel* Client::afficher()
             QStandardItem* emailItem = new QStandardItem(query.value(3).toString());
             QStandardItem* numtelItem = new QStandardItem(query.value(4).toString());
             QStandardItem* ptsFidelItem = new QStandardItem(query.value(5).toString());
-
-            // Get PTS_FIDEL value for coloring logic
             int ptsFidel = query.value(5).toInt();
-
-            // Apply coloring only for PTS_FIDEL >= 20
             if (ptsFidel >= 20) {
                 QColor backgroundColor;
-
                 if (ptsFidel >= 20 && ptsFidel <= 39) {
                     backgroundColor = QColor(209, 135, 63); // Bronze
                 } else if (ptsFidel >= 40 && ptsFidel <= 69) {
@@ -95,8 +89,6 @@ QStandardItemModel* Client::afficher()
                 } else if (ptsFidel >= 70) {
                     backgroundColor = QColor(219, 173, 22); // Gold
                 }
-
-                // Apply background color to all columns in the row
                 cinItem->setBackground(backgroundColor);
                 nomItem->setBackground(backgroundColor);
                 prenomItem->setBackground(backgroundColor);
@@ -161,30 +153,21 @@ void Client::postrequest(QString smsmsg, QString phonenumber) {
     QEventLoop eventLoop;
     QNetworkAccessManager mgr;
     QObject::connect(&mgr, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
-
-    // Replace with your Twilio credentials and phone number
     QString accountSid = "XXXXXXXX";
     QString authToken = "XXXXXXXXX";
-    QString fromNumber = "+12523620019"; // Your Twilio phone number
-
+    QString fromNumber = "+12523620019";
     QUrl url(QString("https://api.twilio.com/2010-04-01/Accounts/%1/Messages.json").arg(accountSid));
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-
-    // Set up Basic Auth header
     QString auth = "Basic " + QString("%1:%2").arg(accountSid, authToken).toUtf8().toBase64();
     req.setRawHeader("Authorization", auth.toUtf8());
-
-    // Form the data as application/x-www-form-urlencoded
     QUrlQuery params;
     params.addQueryItem("To", "+216" + phonenumber);
     params.addQueryItem("From", fromNumber);
     params.addQueryItem("Body", smsmsg);
-
     QByteArray data = params.query().toUtf8();
     QNetworkReply *reply = mgr.post(req, data);
-    eventLoop.exec(); // blocks stack until "finished()" has been called
-
+    eventLoop.exec();
     if (reply->error() == QNetworkReply::NoError) {
         qDebug() << "Success" << reply->readAll();
         delete reply;
@@ -208,4 +191,36 @@ void Client::rechercher(QTableView *table,QString rech)
     model->setQuery(*query);
     table->setModel(model);
     table->show();
+}
+
+void Client::updatePointsForAllClients() {
+    // Step 1: Retrieve all clients with DATE_CREATION and current points
+    QSqlQuery query("SELECT CIN, DATE_CREATION, PTS_FIDEL FROM CLIENT");
+    while (query.next()) {
+        int clientCIN = query.value("CIN").toInt();
+        QDate dateCreation = query.value("DATE_CREATION").toDate();
+        int currentPoints = query.value("PTS_FIDEL").toInt();
+
+        // Step 2: Calculate the number of 10-day intervals since DATE_CREATION
+        QDate currentDate = QDate::currentDate();
+        int daysSinceCreation = dateCreation.daysTo(currentDate);
+        int totalPointsToAward = daysSinceCreation / 10;
+
+        // Step 3: Calculate the points to add
+        int pointsToAdd = totalPointsToAward - currentPoints;
+        if (pointsToAdd > 0) {
+
+            // Step 4: Update the client's points in the database
+            QSqlQuery updateQuery;
+            updateQuery.prepare("UPDATE CLIENT SET PTS_FIDEL = PTS_FIDEL + :pointsToAdd WHERE CIN = :clientCIN");
+            updateQuery.bindValue(":pointsToAdd", pointsToAdd);
+            updateQuery.bindValue(":clientCIN", clientCIN);
+
+            if (updateQuery.exec()) {
+                qDebug() << "Points Ajouter CIN:" << clientCIN << "Point(+)" << pointsToAdd;
+            } else {
+                qDebug() << "Failed to update points for client ID:" << clientCIN << ". Error:" << updateQuery.lastError().text();
+            }
+        }
+    }
 }

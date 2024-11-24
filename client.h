@@ -39,11 +39,7 @@ public:
     void postrequest(QString smsmsg,QString phonenumber);
     void clearTable (QTableView* table);
     void rechercher(QTableView *table,QString x);
-
-
-
-
-
+    void updatePointsForAllClients();
 
 };
 

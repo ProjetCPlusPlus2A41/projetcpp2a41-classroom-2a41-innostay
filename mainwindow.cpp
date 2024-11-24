@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowTitle("INNOSTAY");
+    C.updatePointsForAllClients();
     ui->table_Clients->setModel(C.afficher());
     ui->table_Clients->setColumnWidth(3, 250);
     ui->comboBox_IDs->setModel(C.afficher_cin());
@@ -284,26 +285,18 @@ void MainWindow::on_bt_stat_clicked()
 {
     QDialog *popup = new QDialog(this);
        popup->setWindowTitle("Statistics");
-       popup->setMinimumSize(600, 600); // Adjust the size as needed
-
-       // Call the function to create the chart and set it in the dialog
+       popup->setMinimumSize(600, 600);
        QChartView *chartView = Client_choix_pie();
        QVBoxLayout *layout = new QVBoxLayout(popup);
        layout->addWidget(chartView);
-
-       // Display the dialog window as a popup
-       popup->exec(); // Use exec() for a modal dialog, or show() for a non-modal
+       popup->exec();
 }
 
 
 void MainWindow::on_bt_points_clicked()
 {
-    // Open the dialog
     Dialog dialog(this);
-
-    // Execute the dialog
     if (dialog.exec() == QDialog::Accepted) {
-        // Perform the required updates after the dialog is closed with "OK"
         setWindowTitle("INNOSTAY");
         ui->table_Clients->setModel(C.afficher());
         ui->table_Clients->setColumnWidth(3, 250);
