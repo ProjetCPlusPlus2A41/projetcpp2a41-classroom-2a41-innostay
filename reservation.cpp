@@ -3,6 +3,8 @@
     #include <QSqlError>
     #include <QDebug>
 
+
+
     Reservation::Reservation()
     : id(0), etat(""), dateD(QDate()), dateF(QDate()), prix(0), idClient(0) {}
 
@@ -88,5 +90,76 @@
         }
     }
 
+    QSqlTableModel* Reservation::afficher1() {
+        QSqlDatabase db = QSqlDatabase::database(); // Récupère la connexion à la base de données
 
+        if (!db.isOpen()) {
+            qDebug() << "La base de données n'est pas ouverte.";
+            return nullptr;
+        }
+
+        // Création du modèle pour afficher les données
+        QSqlTableModel *model = new QSqlTableModel(nullptr, db);
+        model->setTable("RESERVATION");
+
+        if (!model->select()) {
+            qDebug() << "Erreur lors de la sélection des données :" << model->lastError().text();
+            delete model;
+            return nullptr;
+        }
+
+        return model;
+    }
+    QSqlTableModel* Reservation::trierPar(const QString &colonne, Qt::SortOrder ordre) {
+        QSqlDatabase db = QSqlDatabase::database(); // Récupère la connexion à la base de données
+
+        if (!db.isOpen()) {
+            qDebug() << "La base de données n'est pas ouverte.";
+            return nullptr;
+        }
+
+        // Création du modèle pour afficher les données
+        QSqlTableModel *model = new QSqlTableModel(nullptr, db);
+        model->setTable("RESERVATION");
+
+        // Tri sur la colonne donnée
+        model->setSort(model->fieldIndex(colonne), ordre);
+
+        if (!model->select()) {
+            qDebug() << "Erreur lors de la sélection des données :" << model->lastError().text();
+            delete model;
+            return nullptr;
+        }
+
+        return model;
+    }
+    QSqlTableModel* Reservation:: rechercherParID(int id) {
+        QSqlDatabase db = QSqlDatabase::database(); // Connexion à la base de données
+        if (!db.isOpen()) {
+            qDebug() << "La base de données n'est pas ouverte.";
+            return nullptr;
+        }
+
+        QSqlTableModel *model = new QSqlTableModel(nullptr, db);
+        model->setTable("RESERVATION");
+
+        // Recherche de l'ID
+        model->setFilter(QString("ID = %1").arg(id));
+        model->select();
+
+        // Vérification si des résultats ont été trouvés
+        if (model->rowCount() == 0) {
+            delete model;
+            return nullptr;  // Aucune ligne trouvée
+        }
+
+        return model;
+    }
+
+
+
+    QString Reservation::getReservationDetails() const {
+    // Retourner les détails de réservation sous forme de chaîne
+    return "Détails de la réservation"; // Remplacez par vos données
+    }
 
