@@ -22,7 +22,10 @@
 #include "qrcode.h"
 #include "qrwidget.h"
 #include <fstream>
+#include <QSystemTrayIcon>
 
+#include <QMenu>
+#include <QAction>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -30,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setupSystemTrayIcon();
     setWindowTitle("INNOSTAY");
     ui->table_Employe->setModel(E.afficher());
     ui->comboBox_IDs->setModel(E.afficher_cin());
@@ -39,11 +43,81 @@ MainWindow::MainWindow(QWidget *parent)
     // ui->line_salaire->setValidator( new QIntValidator(0, 99999999, this));
     ui->line_salaire->setValidator(new QDoubleValidator(0, 99999999, 2, this));
     ui->stackedWidget->setCurrentIndex(0);
-}
 
-MainWindow::~MainWindow() {
+     if (A.connect_arduino() == 0) {
+
+              QMessageBox::warning(this, "Port", A.getarduino_port_name());
+
+          } else {
+
+              QMessageBox::warning(this, "Erreur", "Échec de la connexion à l'Arduino.");
+
+          }
+          connect(A.get_serial(), &QSerialPort::readyRead, this, &MainWindow::Fonction_Arduino);
+}
+MainWindow::~MainWindow()
+{
     delete ui;
 }
+
+void MainWindow::Fonction_Arduino()
+{
+    QByteArray data = A.read_from_arduino();
+    QString NBP = QString::fromUtf8(data).trimmed(); // Convertir les données en chaîne
+qDebug()<<NBP;
+
+
+        if (NBP == "-1")
+        {
+
+                QSqlQuery query;
+                query.prepare("SELECT (NBP) FROM EMPLOYE ");
+                if (query.exec()&& query.next())
+                {
+                    int nb=query.value(0).toInt();
+                    nb=nb+1;
+                    qDebug()<<nb;
+
+                    QSqlQuery query2;
+                    query2.prepare("UPDATE  EMPLOYE SET NBP=:NBP ");
+                        query2.bindValue(":NBP",nb);
+                        query2.exec();
+
+                  QMessageBox::information(this, "le nombre de place disponible", QString::number(nb));
+                }
+                else
+                {
+                    QMessageBox::warning(this, "Erreur", "Échec 1 !");
+                }
+
+        }
+         if (NBP == "1")
+        {
+             QSqlQuery query;
+             query.prepare("SELECT (NBP) FROM EMPLOYE");
+             if (query.exec()&& query.next())
+             {
+
+                 int nb=query.value(0).toInt();
+                 nb=nb-1;
+                 qDebug()<<nb;
+
+                 QSqlQuery query2;
+                 query2.prepare("UPDATE  EMPLOYE SET NBP=:NBP");
+                     query2.bindValue(":NBP",nb);
+                     query2.exec();
+
+               QMessageBox::information(this, "le nombre de place disponible", QString::number(nb));
+
+            }
+            else
+            {
+                QMessageBox::warning(this, "Erreur", "Échec 2 !");
+            }
+        }
+
+    }
+
 
 int modes=1;
 void MainWindow::on_Login_check_PassShowHide_clicked()
@@ -72,8 +146,6 @@ void MainWindow::on_Login_Button_clicked()
         }
     }
 }
-
-
 void MainWindow::on_bt_ajouter_clicked()
 {
     int CIN = ui->line_ID->text().toInt();
@@ -101,6 +173,12 @@ void MainWindow::on_bt_ajouter_clicked()
         ui->label_info_gestion->setText("Ajout Effectué");
         ui->table_Employe->setModel(E.afficher());
         ui->comboBox_IDs->setModel(E.afficher_cin());
+        trayIcon->showMessage(
+                "Employee Added",
+                QString("Employee %1 %2 has been added successfully!").arg(NOM, PRENOM),
+                QSystemTrayIcon::Information,
+                5000 // Duration in milliseconds
+            );
     }else{
         ui->label_info_gestion->setText("Ajout non effectué");
     }
@@ -181,7 +259,7 @@ void MainWindow::on_comboBox_IDs_currentIndexChanged(int index)
             myfile << qr.toSvgString(1);
             myfile.close();
             QSvgRenderer svgRenderer(QString("qrcode.svg"));
-            QPixmap pix(QSize(90, 90));
+            QPixmap pix(QSize(150, 150));
             QPainter pixPainter(&pix);
             pixPainter.setRenderHint(QPainter::Antialiasing);
             svgRenderer.render(&pixPainter);
@@ -218,7 +296,20 @@ void MainWindow::on_line_Recherche_textChanged(const QString &arg1)
     E.clearTable(ui->table_Employe);
     E.rechercher(ui->table_Employe,arg1);
 }
+void MainWindow::setupSystemTrayIcon() {
+    trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setIcon(QIcon("/ressource/Logo.png")); // Set an appropriate icon
+    trayIcon->setToolTip("Employee Management");
 
+    // Optionally, add a context menu to the tray icon
+    QMenu *menu = new QMenu(this);
+    QAction *quitAction = new QAction("Quit", this);
+    connect(quitAction, &QAction::triggered, this, &QWidget::close);
+    menu->addAction(quitAction);
+
+    trayIcon->setContextMenu(menu);
+    trayIcon->show();
+}
 void MainWindow::on_bt_ExportPDF_clicked()
 {
     QString currentPath = QDir::currentPath();
